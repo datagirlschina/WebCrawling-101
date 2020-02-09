@@ -1,7 +1,7 @@
 
 # 爬取腾讯数据制作感染热力图
 
-## 0,环境准备
+## 0、环境准备
 
 1，anaconda默认安装所有需要的库，通过import来验证，或使用pip安装requests，json，pandas，jupyter notebook
 
