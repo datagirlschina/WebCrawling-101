@@ -1,5 +1,5 @@
 
-# 爬取腾讯数据制作感染热力图
+# 爬取腾讯2019_nCoV中国疫情数据
 
 ## 0,环境准备
 
@@ -80,7 +80,7 @@ chinaTotal
 
 
 
-    {'confirm': 37251, 'suspect': 28942, 'dead': 812, 'heal': 2685}
+    {'confirm': 37252, 'suspect': 28942, 'dead': 813, 'heal': 2747}
 
 
 
@@ -92,7 +92,7 @@ chinaAdd
 
 
 
-    {'confirm': 2653, 'suspect': 1285, 'dead': 89, 'heal': 633}
+    {'confirm': 2654, 'suspect': 1285, 'dead': 90, 'heal': 695}
 
 
 
@@ -139,14 +139,14 @@ def extract_china(china_data):
     china_data = pd.DataFrame(china_list)
     # 函数映射
     china_data['confirm'] = china_data['total'].map(confirm)
-    china_data['suspect'] = china_data['total'].map(suspect)
+#     china_data['suspect'] = china_data['total'].map(suspect)
     china_data['dead'] = china_data['total'].map(dead)
     china_data['heal'] = china_data['total'].map(heal)
     china_data['addconfirm'] = china_data['today'].map(confirm)
-    china_data['addsuspect'] = china_data['today'].map(suspect)
+#     china_data['addsuspect'] = china_data['today'].map(suspect)
     china_data['adddead'] = china_data['today'].map(dead)
     china_data['addheal'] = china_data['today'].map(heal)
-    china_data = china_data[["province","city","confirm","suspect","dead","heal","addconfirm","addsuspect","adddead","addheal"]]
+    china_data = china_data[["province","city","confirm","dead","heal","addconfirm"]]
     return china_data
 ```
 
@@ -184,13 +184,9 @@ china_data.head()
       <th>province</th>
       <th>city</th>
       <th>confirm</th>
-      <th>suspect</th>
       <th>dead</th>
       <th>heal</th>
       <th>addconfirm</th>
-      <th>addsuspect</th>
-      <th>adddead</th>
-      <th>addheal</th>
     </tr>
   </thead>
   <tbody>
@@ -199,65 +195,45 @@ china_data.head()
       <td>湖北</td>
       <td>武汉</td>
       <td>14982</td>
-      <td>0</td>
       <td>608</td>
       <td>877</td>
       <td>1379</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>湖北</td>
       <td>孝感</td>
       <td>2436</td>
-      <td>0</td>
       <td>29</td>
       <td>45</td>
       <td>123</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
     </tr>
     <tr>
       <th>2</th>
       <td>湖北</td>
       <td>黄冈</td>
       <td>2141</td>
-      <td>0</td>
       <td>43</td>
       <td>135</td>
       <td>100</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
     </tr>
     <tr>
       <th>3</th>
       <td>湖北</td>
       <td>荆州</td>
       <td>997</td>
-      <td>0</td>
       <td>13</td>
-      <td>33</td>
+      <td>40</td>
       <td>56</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
     </tr>
     <tr>
       <th>4</th>
       <td>湖北</td>
       <td>襄阳</td>
       <td>988</td>
-      <td>0</td>
       <td>7</td>
       <td>40</td>
       <td>81</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
     </tr>
   </tbody>
 </table>
@@ -272,16 +248,14 @@ china_data.head()
 china_data.to_csv('china_data.csv')
 ```
 
-## 4*、数据可视化
-
-再进一步，把国内数据按照省和感染人数重新组合，为进一步可视化作准备
+全国按天计数数据
 
 
 ```python
-#数据处理
-area_data = china_data.groupby("province")["confirm"].sum().reset_index()
-area_data.columns = ["province","confirm"]
-area_data.head()
+chinaDayList = pd.DataFrame(data['chinaDayList'])
+chinaDayList = chinaDayList[['date','confirm','suspect','dead','heal']]
+chinaDayList.to_csv('china_daily_data.csv')
+chinaDayList
 ```
 
 
@@ -305,35 +279,229 @@ area_data.head()
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>province</th>
+      <th>date</th>
       <th>confirm</th>
+      <th>suspect</th>
+      <th>dead</th>
+      <th>heal</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>上海</td>
-      <td>292</td>
+      <td>01.13</td>
+      <td>41</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>云南</td>
-      <td>140</td>
+      <td>01.14</td>
+      <td>41</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>内蒙古</td>
-      <td>54</td>
+      <td>01.15</td>
+      <td>41</td>
+      <td>0</td>
+      <td>2</td>
+      <td>5</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>北京</td>
-      <td>315</td>
+      <td>01.16</td>
+      <td>45</td>
+      <td>0</td>
+      <td>2</td>
+      <td>8</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>台湾</td>
+      <td>01.17</td>
+      <td>62</td>
+      <td>0</td>
+      <td>2</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>01.18</td>
+      <td>198</td>
+      <td>0</td>
+      <td>3</td>
       <td>17</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>01.19</td>
+      <td>275</td>
+      <td>0</td>
+      <td>4</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>01.20</td>
+      <td>291</td>
+      <td>54</td>
+      <td>6</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>01.21</td>
+      <td>440</td>
+      <td>37</td>
+      <td>9</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>01.22</td>
+      <td>571</td>
+      <td>393</td>
+      <td>17</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>01.23</td>
+      <td>830</td>
+      <td>1072</td>
+      <td>25</td>
+      <td>34</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>01.24</td>
+      <td>1287</td>
+      <td>1965</td>
+      <td>41</td>
+      <td>38</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>01.25</td>
+      <td>1975</td>
+      <td>2684</td>
+      <td>56</td>
+      <td>49</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>01.26</td>
+      <td>2744</td>
+      <td>5794</td>
+      <td>80</td>
+      <td>51</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>01.27</td>
+      <td>4515</td>
+      <td>6973</td>
+      <td>106</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>01.28</td>
+      <td>5974</td>
+      <td>9239</td>
+      <td>132</td>
+      <td>103</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>01.29</td>
+      <td>7711</td>
+      <td>12167</td>
+      <td>170</td>
+      <td>124</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>01.30</td>
+      <td>9692</td>
+      <td>15238</td>
+      <td>213</td>
+      <td>171</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>01.31</td>
+      <td>11791</td>
+      <td>17988</td>
+      <td>259</td>
+      <td>243</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>02.01</td>
+      <td>14380</td>
+      <td>19544</td>
+      <td>304</td>
+      <td>328</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>02.02</td>
+      <td>17236</td>
+      <td>21558</td>
+      <td>361</td>
+      <td>475</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>02.03</td>
+      <td>20471</td>
+      <td>23214</td>
+      <td>425</td>
+      <td>632</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>02.04</td>
+      <td>24363</td>
+      <td>23260</td>
+      <td>491</td>
+      <td>892</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>02.05</td>
+      <td>28060</td>
+      <td>24702</td>
+      <td>564</td>
+      <td>1153</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>02.06</td>
+      <td>31211</td>
+      <td>26359</td>
+      <td>637</td>
+      <td>1542</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>02.07</td>
+      <td>34598</td>
+      <td>27657</td>
+      <td>723</td>
+      <td>2052</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>02.08</td>
+      <td>37251</td>
+      <td>28942</td>
+      <td>812</td>
+      <td>2651</td>
     </tr>
   </tbody>
 </table>
@@ -341,296 +509,4 @@ area_data.head()
 
 
 
-使用area_data绘图
-
-
-```python
-from pyecharts.charts import *
-from pyecharts import options as opts
-from pyecharts.globals import ThemeType
-
-area_map = Map(init_opts=opts.InitOpts(theme=ThemeType.WESTEROS))
-area_map.add("",[list(z) for z in zip(list(area_data["province"]), list(area_data["confirm"]))], "china",is_map_symbol_show=False)
-area_map.set_global_opts(title_opts=opts.TitleOpts(title="2019_nCoV中国疫情地图"),visualmap_opts=opts.VisualMapOpts(is_piecewise=True,
-                pieces = [
-                        {"min": 1001 , "label": '>1000',"color": "#893448"}, #不指定 max，表示 max 为无限大
-                        {"min": 500, "max": 1000, "label": '500-1000',"color": "#ff585e"},
-                        {"min": 101, "max": 499, "label": '101-499',"color": "#fb8146"},
-                        {"min": 10, "max": 100, "label": '10-100',"color": "#ffb248"},
-                        {"min": 0, "max": 9, "label": '0-9',"color" : "#fff2d1" }]))
-area_map.render_notebook()
-```
-
-
-
-
-
-<script>
-    require.config({
-        paths: {
-            'echarts':'https://assets.pyecharts.org/assets/echarts.min', 'china':'https://assets.pyecharts.org/assets/maps/china', 'westeros':'https://assets.pyecharts.org/assets/themes/westeros'
-        }
-    });
-</script>
-
-        <div id="254b8d43750d4fd2a493b97ab79e2f58" style="width:900px; height:500px;"></div>
-
-<script>
-        require(['echarts', 'china', 'westeros'], function(echarts) {
-                var chart_254b8d43750d4fd2a493b97ab79e2f58 = echarts.init(
-                    document.getElementById('254b8d43750d4fd2a493b97ab79e2f58'), 'westeros', {renderer: 'canvas'});
-                var option_254b8d43750d4fd2a493b97ab79e2f58 = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "series": [
-        {
-            "type": "map",
-            "label": {
-                "show": true,
-                "position": "top",
-                "margin": 8
-            },
-            "mapType": "china",
-            "data": [
-                {
-                    "name": "\u4e0a\u6d77",
-                    "value": 292
-                },
-                {
-                    "name": "\u4e91\u5357",
-                    "value": 140
-                },
-                {
-                    "name": "\u5185\u8499\u53e4",
-                    "value": 54
-                },
-                {
-                    "name": "\u5317\u4eac",
-                    "value": 315
-                },
-                {
-                    "name": "\u53f0\u6e7e",
-                    "value": 17
-                },
-                {
-                    "name": "\u5409\u6797",
-                    "value": 78
-                },
-                {
-                    "name": "\u56db\u5ddd",
-                    "value": 386
-                },
-                {
-                    "name": "\u5929\u6d25",
-                    "value": 90
-                },
-                {
-                    "name": "\u5b81\u590f",
-                    "value": 45
-                },
-                {
-                    "name": "\u5b89\u5fbd",
-                    "value": 779
-                },
-                {
-                    "name": "\u5c71\u4e1c",
-                    "value": 435
-                },
-                {
-                    "name": "\u5c71\u897f",
-                    "value": 115
-                },
-                {
-                    "name": "\u5e7f\u4e1c",
-                    "value": 1120
-                },
-                {
-                    "name": "\u5e7f\u897f",
-                    "value": 195
-                },
-                {
-                    "name": "\u65b0\u7586",
-                    "value": 45
-                },
-                {
-                    "name": "\u6c5f\u82cf",
-                    "value": 468
-                },
-                {
-                    "name": "\u6c5f\u897f",
-                    "value": 740
-                },
-                {
-                    "name": "\u6cb3\u5317",
-                    "value": 206
-                },
-                {
-                    "name": "\u6cb3\u5357",
-                    "value": 1033
-                },
-                {
-                    "name": "\u6d59\u6c5f",
-                    "value": 1075
-                },
-                {
-                    "name": "\u6d77\u5357",
-                    "value": 128
-                },
-                {
-                    "name": "\u6e56\u5317",
-                    "value": 27100
-                },
-                {
-                    "name": "\u6e56\u5357",
-                    "value": 838
-                },
-                {
-                    "name": "\u6fb3\u95e8",
-                    "value": 10
-                },
-                {
-                    "name": "\u7518\u8083",
-                    "value": 79
-                },
-                {
-                    "name": "\u798f\u5efa",
-                    "value": 250
-                },
-                {
-                    "name": "\u897f\u85cf",
-                    "value": 1
-                },
-                {
-                    "name": "\u8d35\u5dde",
-                    "value": 96
-                },
-                {
-                    "name": "\u8fbd\u5b81",
-                    "value": 105
-                },
-                {
-                    "name": "\u91cd\u5e86",
-                    "value": 446
-                },
-                {
-                    "name": "\u9655\u897f",
-                    "value": 208
-                },
-                {
-                    "name": "\u9752\u6d77",
-                    "value": 18
-                },
-                {
-                    "name": "\u9999\u6e2f",
-                    "value": 26
-                },
-                {
-                    "name": "\u9ed1\u9f99\u6c5f",
-                    "value": 307
-                }
-            ],
-            "roam": true,
-            "zoom": 1,
-            "showLegendSymbol": false,
-            "emphasis": {}
-        }
-    ],
-    "legend": [
-        {
-            "data": [
-                ""
-            ],
-            "selected": {
-                "": true
-            },
-            "show": true,
-            "padding": 5,
-            "itemGap": 10,
-            "itemWidth": 25,
-            "itemHeight": 14
-        }
-    ],
-    "tooltip": {
-        "show": true,
-        "trigger": "item",
-        "triggerOn": "mousemove|click",
-        "axisPointer": {
-            "type": "line"
-        },
-        "textStyle": {
-            "fontSize": 14
-        },
-        "borderWidth": 0
-    },
-    "title": [
-        {
-            "text": "2019_nCoV\u4e2d\u56fd\u75ab\u60c5\u5730\u56fe",
-            "padding": 5,
-            "itemGap": 10
-        }
-    ],
-    "visualMap": {
-        "show": true,
-        "type": "piecewise",
-        "min": 0,
-        "max": 100,
-        "inRange": {
-            "color": [
-                "#50a3ba",
-                "#eac763",
-                "#d94e5d"
-            ]
-        },
-        "calculable": true,
-        "inverse": false,
-        "splitNumber": 5,
-        "orient": "vertical",
-        "showLabel": true,
-        "itemWidth": 20,
-        "itemHeight": 14,
-        "borderWidth": 0,
-        "pieces": [
-            {
-                "min": 1001,
-                "label": ">1000",
-                "color": "#893448"
-            },
-            {
-                "min": 500,
-                "max": 1000,
-                "label": "500-1000",
-                "color": "#ff585e"
-            },
-            {
-                "min": 101,
-                "max": 499,
-                "label": "101-499",
-                "color": "#fb8146"
-            },
-            {
-                "min": 10,
-                "max": 100,
-                "label": "10-100",
-                "color": "#ffb248"
-            },
-            {
-                "min": 0,
-                "max": 9,
-                "label": "0-9",
-                "color": "#fff2d1"
-            }
-        ]
-    }
-};
-                chart_254b8d43750d4fd2a493b97ab79e2f58.setOption(option_254b8d43750d4fd2a493b97ab79e2f58);
-        });
-    </script>
-
-
-
+## 4*、数据可视化
